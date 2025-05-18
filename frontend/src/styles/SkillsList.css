@@ -1,0 +1,35 @@
+/* Custom styles for the SkillsList component */
+.skill-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
+
+.skill-tag {
+  font-size: 0.9rem;
+  padding: 0.5rem 0.75rem;
+  margin-bottom: 0.5rem;
+  border-radius: 50px;
+  display: inline-flex;
+  align-items: center;
+  transition: transform 0.2s;
+}
+
+.skill-tag:hover {
+  transform: scale(1.05);
+}
+
+/* Accordion customization */
+.accordion-button:not(.collapsed) {
+  background-color: rgba(13, 110, 253, 0.1);
+}
+
+.accordion-button:focus {
+  box-shadow: none;
+  border-color: rgba(13, 110, 253, 0.25);
+}
+
+/* Accordion body padding */
+.accordion-body {
+  padding: 1.5rem;
+}

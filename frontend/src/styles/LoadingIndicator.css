@@ -1,0 +1,20 @@
+/* Custom styles for the LoadingIndicator component */
+.progress-bar-animated {
+  animation: progress-bar-stripes 1s linear infinite;
+}
+
+@keyframes pulse {
+  0% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.05);
+  }
+  100% {
+    transform: scale(1);
+  }
+}
+
+.spinner-border {
+  animation: spinner-border 1.2s linear infinite;
+}
