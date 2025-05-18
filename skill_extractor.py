@@ -1,10 +1,12 @@
-import fitz  # PyMuPDF
 import nltk
 import re
 import logging
+import os
+import tempfile
 from nltk.tokenize import word_tokenize, sent_tokenize
 from nltk.corpus import stopwords
 from skills_data import SKILLS_LIST
+from pypdf import PdfReader
 
 # Configure logging
 logger = logging.getLogger(__name__)
@@ -20,9 +22,19 @@ try:
 except LookupError:
     nltk.download('stopwords')
 
+# Make sure punkt_tab is downloaded for sentence tokenization
+try:
+    nltk.data.find('tokenizers/punkt_tab')
+except LookupError:
+    try:
+        nltk.download('punkt_tab')
+    except:
+        # If punkt_tab is not available, we'll add a fallback method for sentence tokenization
+        logger.warning("Unable to download punkt_tab. Using basic sentence splitting as fallback.")
+
 def extract_text_from_pdf(pdf_path):
     """
-    Extract text from a PDF file using PyMuPDF.
+    Extract text from a PDF file using PyPDF.
     
     Args:
         pdf_path (str): Path to the PDF file
@@ -31,14 +43,33 @@ def extract_text_from_pdf(pdf_path):
         str: Extracted text from the PDF
     """
     try:
-        doc = fitz.open(pdf_path)
-        text = ""
-        
-        for page in doc:
-            text += page.get_text()
+        # Open the PDF file
+        with open(pdf_path, 'rb') as file:
+            # Create a PDF reader object
+            pdf_reader = PdfReader(file)
             
-        doc.close()
-        return text
+            # Get the total number of pages
+            num_pages = len(pdf_reader.pages)
+            
+            # Initialize empty text string
+            text = ""
+            
+            # Extract text from each page
+            for page_num in range(num_pages):
+                # Get the page
+                page = pdf_reader.pages[page_num]
+                
+                # Extract text
+                page_text = page.extract_text()
+                
+                # Add to the total text
+                if page_text:
+                    text += page_text + "\n"
+            
+            if not text.strip():
+                logger.warning("PDF text extraction yielded empty result")
+                
+            return text
     except Exception as e:
         logger.exception(f"Error extracting text from PDF: {e}")
         raise
@@ -148,6 +179,21 @@ def categorize_skills(skills):
     # Remove empty categories
     return {k: v for k, v in categorized_skills.items() if v}
 
+def custom_sentence_tokenize(text):
+    """
+    A simple custom sentence tokenizer as fallback when NLTK's sent_tokenize fails.
+    
+    Args:
+        text (str): Text to tokenize into sentences
+        
+    Returns:
+        list: List of sentences
+    """
+    # Basic sentence splitting by common sentence terminators
+    # This is a simplified approach and won't handle all cases perfectly
+    sentences = re.split(r'(?<=[.!?])\s+', text)
+    return [s.strip() for s in sentences if s.strip()]
+
 def extract_skills_from_pdf(pdf_path):
     """
     Main function to extract skills from a PDF file.
@@ -162,8 +208,18 @@ def extract_skills_from_pdf(pdf_path):
         # Extract text from PDF
         text = extract_text_from_pdf(pdf_path)
         
-        # Break text into sentences
-        sentences = sent_tokenize(text)
+        if not text.strip():
+            # If no text was extracted, return a message
+            return {"Error": ["No text could be extracted from the PDF. Please check the file and try again."]}
+        
+        # Break text into sentences using a try-except block
+        try:
+            # Try using NLTK's sentence tokenizer
+            sentences = sent_tokenize(text)
+        except Exception as e:
+            logger.warning(f"NLTK sentence tokenization failed: {e}")
+            # Fallback to our custom sentence tokenizer
+            sentences = custom_sentence_tokenize(text)
         
         # Preprocess the text
         tokens = preprocess_text(text)
@@ -171,10 +227,15 @@ def extract_skills_from_pdf(pdf_path):
         # Identify skills
         skills = identify_skills(tokens, sentences)
         
+        if not skills:
+            # If no skills were identified, return a message
+            return {"Notice": ["No skills were identified in this resume. Try a different file or ensure the resume contains relevant skills."]}
+        
         # Categorize skills
         categorized_skills = categorize_skills(skills)
         
         return categorized_skills
     except Exception as e:
         logger.exception(f"Error extracting skills from PDF: {e}")
-        raise
+        # Return error message as a categorized skill for better UX
+        return {"Error": [f"An error occurred while processing your resume: {str(e)}"]}
