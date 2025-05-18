@@ -4,6 +4,19 @@
  * @param {Object} props.skills - Object containing categorized skills
  */
 const SkillsList = ({ skills }) => {
+  // State to track which categories are expanded
+  const [expandedCategories, setExpandedCategories] = React.useState({});
+
+  React.useEffect(() => {
+    // Initialize with first category open
+    const categories = Object.keys(skills);
+    if (categories.length > 0) {
+      const initial = {};
+      initial[categories[0]] = true;
+      setExpandedCategories(initial);
+    }
+  }, [skills]);
+
   // Get the total count of skills across all categories
   const getTotalSkillsCount = () => {
     return Object.values(skills).reduce((total, categorySkills) => total + categorySkills.length, 0);
@@ -17,10 +30,20 @@ const SkillsList = ({ skills }) => {
       'Data Science': 'success',
       'Database': 'warning',
       'DevOps': 'danger',
-      'Other': 'secondary'
+      'Other': 'secondary',
+      'Error': 'danger',
+      'Notice': 'info'
     };
     
     return colors[category] || 'secondary';
+  };
+
+  // Toggle category expansion
+  const toggleCategory = (category) => {
+    setExpandedCategories(prev => ({
+      ...prev,
+      [category]: !prev[category]
+    }));
   };
 
   // Render skills by category in accordion
@@ -35,12 +58,9 @@ const SkillsList = ({ skills }) => {
           <div className="accordion-item" key={category}>
             <h2 className="accordion-header" id={`heading${index}`}>
               <button 
-                className={`accordion-button ${index !== 0 ? 'collapsed' : ''}`} 
+                className={`accordion-button ${!expandedCategories[category] ? 'collapsed' : ''}`} 
                 type="button" 
-                data-bs-toggle="collapse" 
-                data-bs-target={`#collapse${index}`} 
-                aria-expanded={index === 0 ? 'true' : 'false'} 
-                aria-controls={`collapse${index}`}
+                onClick={() => toggleCategory(category)}
               >
                 <span className={`badge bg-${getCategoryColor(category)} me-2`}>
                   {categorySkills.length}
@@ -49,10 +69,7 @@ const SkillsList = ({ skills }) => {
               </button>
             </h2>
             <div 
-              id={`collapse${index}`} 
-              className={`accordion-collapse collapse ${index === 0 ? 'show' : ''}`} 
-              aria-labelledby={`heading${index}`} 
-              data-bs-parent="#skillsAccordion"
+              className={`accordion-collapse ${expandedCategories[category] ? 'show' : 'collapse'}`}
             >
               <div className="accordion-body">
                 <div className="skill-tags">
