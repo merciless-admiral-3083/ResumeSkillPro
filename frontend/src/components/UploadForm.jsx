@@ -2,9 +2,7 @@ import React, { useState, useRef } from 'react';
 import { uploadResume } from '../services/api';
 import '../styles/UploadForm.css';
 
-/**
- * Component for handling file uploads
- */
+
 const UploadForm = ({ setSkills, setLoading, setError, setFileName }) => {
   const [isDragging, setIsDragging] = useState(false);
   const [file, setFile] = useState(null);
@@ -51,9 +49,7 @@ const UploadForm = ({ setSkills, setLoading, setError, setFileName }) => {
     }
   };
 
-  /**
-   * Handle click on the upload area
-   */
+  
   const handleUploadClick = () => {
     fileInputRef.current.click();
   };

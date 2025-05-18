@@ -5,18 +5,14 @@ import LoadingIndicator from './components/LoadingIndicator';
 import ErrorMessage from './components/ErrorMessage';
 import './styles/App.css';
 
-/**
- * Main App component that coordinates the resume skill extraction app
- */
+
 function App() {
   const [skills, setSkills] = useState(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
   const [fileName, setFileName] = useState(null);
 
-  /**
-   * Reset the app state
-   */
+
   const handleReset = () => {
     setSkills(null);
     setError(null);

@@ -11,7 +11,6 @@ const SkillsList = ({ skills }) => {
   const [expandedCategories, setExpandedCategories] = useState({});
 
   useEffect(() => {
-    // Initialize with first category open
     const categories = Object.keys(skills);
     if (categories.length > 0) {
       const initial = {};
@@ -20,12 +19,10 @@ const SkillsList = ({ skills }) => {
     }
   }, [skills]);
 
-  // Get the total count of skills across all categories
   const getTotalSkillsCount = () => {
     return Object.values(skills).reduce((total, categorySkills) => total + categorySkills.length, 0);
   };
 
-  // Get a color based on category name for consistent category colors
   const getCategoryColor = (category) => {
     const colors = {
       'Programming Languages': 'primary',
@@ -41,7 +38,6 @@ const SkillsList = ({ skills }) => {
     return colors[category] || 'secondary';
   };
 
-  // Toggle category expansion
   const toggleCategory = (category) => {
     setExpandedCategories(prev => ({
       ...prev,
@@ -49,7 +45,6 @@ const SkillsList = ({ skills }) => {
     }));
   };
 
-  // Render skills by category in accordion
   return (
     <div className="skills-container">
       <div className="d-flex justify-content-between align-items-center mb-3">

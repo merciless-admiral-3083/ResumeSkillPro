@@ -1,7 +1,5 @@
 import axios from 'axios';
 
-// API base URL - will use the proxy setting in development
-// In production, you would set this to the actual backend URL
 const API_BASE_URL = process.env.NODE_ENV === 'production' 
   ? 'https://your-production-api-url.com/api' 
   : '/api';

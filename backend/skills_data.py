@@ -1,5 +1,3 @@
-# List of common skills to extract from resumes
-# This list can be expanded to include more skills
 
 SKILLS_LIST = [
     # Programming Languages

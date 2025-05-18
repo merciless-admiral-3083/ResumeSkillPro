@@ -1,9 +1,6 @@
 import React from 'react';
 import '../styles/LoadingIndicator.css';
 
-/**
- * Component to display a loading spinner and message
- */
 const LoadingIndicator = () => {
   return (
     <div className="text-center py-5">
