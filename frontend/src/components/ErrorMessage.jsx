@@ -2,10 +2,9 @@ import React from 'react';
 import '../styles/ErrorMessage.css';
 
 /**
- * Component to display error messages
- * @param {Object} props - Component props
- * @param {string} props.message - Error message to display
- * @param {Function} props.onReset - Function to reset the application state
+ * @param {Object} props 
+ * @param {string} props.message 
+ * @param {Function} props.onReset 
  */
 const ErrorMessage = ({ message, onReset }) => {
   return (

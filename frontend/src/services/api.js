@@ -1,7 +1,7 @@
 import axios from 'axios';
 
 const API_BASE_URL = process.env.NODE_ENV === 'production' 
-  ? 'https://your-production-api-url.com/api' 
+  ? 'https://backend123456-production.up.railway.app/api' 
   : '/api';
 
 /**

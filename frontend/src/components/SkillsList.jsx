@@ -7,7 +7,6 @@ import '../styles/SkillsList.css';
  * @param {Object} props.skills - Object containing categorized skills
  */
 const SkillsList = ({ skills }) => {
-  // State to track which categories are expanded
   const [expandedCategories, setExpandedCategories] = useState({});
 
   useEffect(() => {
